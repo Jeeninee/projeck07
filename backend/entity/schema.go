@@ -58,6 +58,6 @@ import (
 		CourseID 	*uint
 		Course		Course `gorm:"references:id"`
 
-		StaffID		*uint
-		Staff		Staff `gorm:"references:id"`
+		RegistrarID		*uint
+		Registrar		Registrar `gorm:"references:id"`
 	}
