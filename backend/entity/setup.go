@@ -21,7 +21,7 @@ func SetupDatabase() {
 	database.AutoMigrate(
 		&IncreaseGrades{},
 		&Grades{},
-		&Staff{},
+		&{Registrar},
 		&Course{},
 		&Student{}
 	)
