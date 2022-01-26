@@ -3,7 +3,7 @@ package controller
 import (
 	"net/http"
 
-	"github.com/Jeninee/project07/entity"
+	"github.com/Jeeninee/project07/entity"
 	"github.com/gin-gonic/gin"
 )
 
@@ -34,7 +34,7 @@ func GetGrades(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": Grades})
 }
 
-// GET /Gradess
+// GET /Grades
 func ListGrades(c *gin.Context) {
 	var Grades []entity.Grades
 	if err := entity.DB().Raw("SELECT * FROM grades").Scan(&Gradess).Error; err != nil {

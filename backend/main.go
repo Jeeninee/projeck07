@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/Jeeninee/project07/controller"
 	"github.com/Jeeninee/project07/entity"
+	"github.com/Jeeninee/project07/middlewares"
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,22 +13,39 @@ func main() {
 	r := gin.Default()
 	r.Use(CORSMiddleware())
 
-	
+	api := r.Group("")
+	{
+		protected := api.Use(middlewares.Authorizes())
+		{
+			// Student Routes
+			protected.GET("/students", controller.ListStudents)
+			protected.GET("/students/:id", controller.ListStudent)
+			protected.GET("/student/:id", controller.GetStudent)
+			protected.PATCH("/students", controller.UpdateStudent)
+			protected.DELETE("/students/:id", controller.DeleteStudent)
 
-			// Semester Routes
-			r.GET("/semesters", controller.ListSemesters)
-			r.GET("/semester/:id", controller.GetSemester)
-			r.POST("/semesters", controller.CreateSemester)
-			r.PATCH("/semesters", controller.UpdateSemester)
-			r.DELETE("/semesters/:id", controller.DeleteSemester)
+			// Registrar Routes
+			protected.GET("/registrars", controller.ListRegistrar)
+			protected.GET("/registrar/:id", controller.GetRegistrar)
+			protected.POST("/registrar", controller.CreateRegistrar)
+			protected.PATCH("/registrars", controller.UpdateRegistrar)
+			protected.DELETE("/registrars/:id", controller.DeleteRegistrar)
 
-			// Grades Routes
-			r.GET("/Gradess", controller.ListGradess)
-			r.GET("/Grades/:id", controller.GetGrades)
-			r.POST("/Gradess", controller.CreateGrades)
-			r.PATCH("/Gradess", controller.UpdateGrades)
-			r.DELETE("/Gradess/:id", controller.DeleteGrades)			
-		
+			// Course Routes
+			protected.GET("/courses", controller.ListCourses)
+			protected.GET("/course/:id", controller.GetCourse)
+			protected.POST("/courses", controller.CreateCourse)
+			protected.PATCH("/courses", controller.UpdateCourse)
+			protected.DELETE("/courses/:id", controller.DeleteCourse)
+		}
+	}
+
+	// Student Routes
+	r.POST("/students", controller.CreateStudent)
+
+	// Authentication Routes
+	r.POST("/student/login", controller.LoginStudent)
+	r.POST("/registrar/login", controller.LoginRegistrar)
 
 	// Run the server
 	r.Run()

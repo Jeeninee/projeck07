@@ -21,12 +21,14 @@ func SetupDatabase() {
 	database.AutoMigrate(
 		&IncreaseGrades{},
 		&Grades{},
-		&{Registrar},
+		&Registrar{},
 		&Course{},
 		&Student{}
 	)
 
 	db = database
+		
+		password, err := bcrypt.GenerateFromPassword([]byte("123456"), 14)
 
 	//Student Data
 		student1 := Student{
@@ -92,34 +94,41 @@ func SetupDatabase() {
 		db.Model(&Student{}).Create(&student6)
 
 	//Registrar Data
-		registrar1 := Registrar{
-			ID_registrar: "R5678912",
-			Name: "Prayut",
-			Email: "Prayut@gmail.com",
-			Password: "",
-		}
-		db.Model(&Registrar{}).Create(&registrar1)
-		registrar2 := Registrar{
-			ID_registrar: "R2034567",
-			Name: "Praweena",
-			Email: "Praweena@gmail.com",
-			Password: "",
-		}
-		db.Model(&Registrar{}).Create(&registrar2)
-		registrar3 := Registrar{
-			ID_registrar: "R7891234",
-			Name: "Prawit",
-			Email: "Prawit@gmail.com",
-			Password: "",
-		}
-		db.Model(&Registrar{}).Create(&registrar3)
-		registrar4 := Registrar{
-			ID_registrar: "R3454321",
-			Name: "Sutin",
-			Email: "Sutin@gmail.com",
-			Password: "",
-		}
-		db.Model(&Registrar{}).Create(&registrar4)
+	registrar1 := Registrar{
+		ID_registrar: "R5678912",
+		Prefix:       "Miss",
+		Name:         "Fasai Jangloei",
+		Email:        "fj@gmail.com",
+		Password:     string(password),
+	}
+	db.Model(&Registrar{}).Create(&registrar1)
+
+	registrar2 := Registrar{
+		ID_registrar: "R2034567",
+		Prefix:       "Mr.",
+		Name:         "Sompong Naja",
+		Email:        "sn@gmail.com",
+		Password:     string(password),
+	}
+	db.Model(&Registrar{}).Create(&registrar2)
+
+	registrar3 := Registrar{
+		ID_registrar: "R1234567",
+		Prefix:       "Mr.",
+		Name:         "Meta  Kunwat",
+		Email:        "mk@gmail.com",
+		Password:     string(password),
+	}
+	db.Model(&Registrar{}).Create(&registrar3)
+
+	registrar4 := Registrar{
+		ID_registrar: "R2345678",
+		Prefix:       "Mr.",
+		Name:         "Apiwat Sompung",
+		Email:        "ap@gmail.com",
+		Password:     string(password),
+	}
+	db.Model(&Registrar{}).Create(&registrar4)
 
 		//Course Data
 		course1 := Course{
