@@ -8,47 +8,43 @@ import (
 )
 
 // POST /IncreaseGrades
-func CreateExamSchedule(c *gin.Context) {
+func CreateIncreaseGrades(c *gin.Context) {
 
 	var IncreaseGrades entity.IncreaseGrades
-	var Semester entity.Semester
-	var ExamType entity.ExamType
+	var Grades entity.Grades
+	var Student entity.Student
 	var Course entity.Course
 
-	// ผลลัพธ์ที่ได้จากขั้นตอนที่ 8 จะถูก bind เข้าตัวแปร ExamSchedule
-	if err := c.ShouldBindJSON(&ExamSchedule); err != nil {
+	// ผลลัพธ์ที่ได้จากขั้นตอนที่ 8 จะถูก bind เข้าตัวแปร IncreaseGrades
+	if err := c.ShouldBindJSON(&IncreaseGrades); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 
 	// 9: ค้นหา Course ด้วย id
-	if tx := entity.DB().Where("id = ?", ExamSchedule.CourseID).First(&Course); tx.RowsAffected == 0 {
+	if tx := entity.DB().Where("id = ?", IncreaseGrades.CourseID).First(&Course); tx.RowsAffected == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Course not found"})
 		return
 	}
 
-	// 10: ค้นหา Semester ด้วย id
-	if tx := entity.DB().Where("id = ?", ExamSchedule.SemesterID).First(&Semester); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Semester not found"})
+	// 10: ค้นหา Student ด้วย id
+	if tx := entity.DB().Where("id = ?", IncreaseGrades.StudentID).First(&Student); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Student not found"})
 		return
 	}
 
-	// 11: ค้นหา ExamType ด้วย id
-	if tx := entity.DB().Where("id = ?", ExamSchedule.ExamTypeID).First(&ExamType); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "ExamType not found"})
+	// 11: ค้นหา Grades ด้วย id
+	if tx := entity.DB().Where("id = ?", IncreaseGrades.GradesID).First(&Grades); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Grades not found"})
 		return
 	}
-	// 12: สร้าง ExamSchedule
-	pm := entity.ExamSchedule{
-		Semester: Semester,       // โยงความสัมพันธ์กับ Entity Semester
-		Course:         Course,               // โยงความสัมพันธ์กับ Entity Course
-		ExamType:  ExamType,        // โยงความสัมพันธ์กับ Entity ExamType
-		AcamedicYear: ExamSchedule.AcamedicYear,
-		RoomExam: ExamSchedule.RoomExam,
-		DateExam: ExamSchedule.DateExam,
-		StartTime: ExamSchedule.StartTime,
-		EndTime: ExamSchedule.EndTime,
+	// 12: สร้าง IncreaseGrades
+	pm := entity.IncreaseGrades{
+		Grades: Grades,       // โยงความสัมพันธ์กับ Entity Semester
+		Course: Course,               // โยงความสัมพันธ์กับ Entity Course
+		Student:  Student,        // โยงความสัมพันธ์กับ Entity ExamType
+		Date : IncreaseGrades.Date,
 	}
 
 	// 13: บันทึก
@@ -59,56 +55,56 @@ func CreateExamSchedule(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": pm})
 }
 
-// GET /ExamSchedule/:id
-func GetExamSchedule(c *gin.Context) {
-	var ExamSchedule entity.ExamSchedule
+// GET /IncreaseGrades/:id
+func GetIncreaseGrades(c *gin.Context) {
+	var IncreaseGrades entity.IncreaseGrades
 	id := c.Param("id")
-	if err := entity.DB().Preload("Semester").Preload("ExamType").Preload("Course").Raw("SELECT * FROM ExamSchedules WHERE id = ?", id).Find(&ExamSchedule).Error; err != nil {
+	if err := entity.DB().Preload("Grades").Preload("Student").Preload("Course").Raw("SELECT * FROM IncreaseGrades WHERE id = ?", id).Find(&IncreaseGrades).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"data": ExamSchedule})
+	c.JSON(http.StatusOK, gin.H{"data": IncreaseGrades})
 }
 
-// GET /ExamSchedules
-func ListExamSchedules(c *gin.Context) {
-	var ExamSchedules []entity.ExamSchedule
-	if err := entity.DB().Preload("Semester").Preload("ExamType").Preload("Course").Raw("SELECT * FROM ExamSchedules").Find(&ExamSchedules).Error; err != nil {
+// GET /IncreaseGrades
+func ListIncreaseGrades(c *gin.Context) {
+	var IncreaseGrades []entity.IncreaseGrades
+	if err := entity.DB().Preload("Grades").Preload("Student").Preload("Course").Raw("SELECT * FROM IncreaseGrades").Find(&IncreaseGrades).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": ExamSchedules})
+	c.JSON(http.StatusOK, gin.H{"data": IncreaseGrades})
 }
 
-// DELETE /ExamSchedules/:id
-func DeleteExamSchedule(c *gin.Context) {
+// DELETE /IncreaseGrades/:id
+func DeleteIncreaseGrades(c *gin.Context) {
 	id := c.Param("id")
-	if tx := entity.DB().Exec("DELETE FROM ExamSchedules WHERE id = ?", id); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "ExamSchedule not found"})
+	if tx := entity.DB().Exec("DELETE FROM IncreaseGrades WHERE id = ?", id); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "IncreaseGrades not found"})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": id})
 }
 
-// PATCH /ExamSchedules
-func UpdateExamSchedule(c *gin.Context) {
-	var ExamSchedule entity.ExamSchedule
-	if err := c.ShouldBindJSON(&ExamSchedule); err != nil {
+// PATCH /IncreaseGrades
+func UpdateIncreaseGrades(c *gin.Context) {
+	var IncreaseGrades entity.IncreaseGrades
+	if err := c.ShouldBindJSON(&IncreaseGrades); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if tx := entity.DB().Where("id = ?", ExamSchedule.ID).First(&ExamSchedule); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "ExamSchedule not found"})
+	if tx := entity.DB().Where("id = ?", IncreaseGrades.ID).First(&IncreaseGrades); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "IncreaseGrades not found"})
 		return
 	}
 
-	if err := entity.DB().Save(&ExamSchedule).Error; err != nil {
+	if err := entity.DB().Save(&IncreaseGrades).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": ExamSchedule})
+	c.JSON(http.StatusOK, gin.H{"data": IncreaseGrades})
 }
